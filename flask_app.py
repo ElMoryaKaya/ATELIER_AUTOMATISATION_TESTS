@@ -1,16 +1,31 @@
-from flask import Flask, render_template_string, render_template, jsonify, request, redirect, url_for, session
-from flask import render_template
-from flask import json
-from urllib.request import urlopen
-from werkzeug.utils import secure_filename
-import sqlite3
+from flask import Flask, jsonify, render_template
+import storage
+# import tester.runner as runner # Votre script qui lance les tests
 
 app = Flask(__name__)
 
-@app.get("/")
-def consignes():
-     return render_template('consignes.html')
+# Initialisation de la base au démarrage
+storage.init_db()
 
-if __name__ == "__main__":
-    # utile en local uniquement
-    app.run(host="0.0.0.0", port=5000, debug=True)
+@app.route('/health')
+def health_check():
+    """Bonus : Vérifier que votre propre garde est haute."""
+    return jsonify({"status": "OK", "message": "Le Dojo est opérationnel."}), 200
+
+@app.route('/run')
+def trigger_run():
+    """Déclenche l'affrontement (les tests automatisés)."""
+    # 1. Appeler votre runner pour exécuter les tests
+    # summary, details = runner.execute_all_tests()
+    
+    # 2. Sauvegarder dans SQLite
+    # storage.save_run(summary, details)
+    
+    return jsonify({"status": "Tests terminés", "action": "Consultez le /dashboard"}), 200
+
+@app.route('/dashboard')
+def dashboard():
+    """Affiche l'historique des affrontements."""
+    # runs = storage.get_all_runs()
+    # return render_template('dashboard.html', runs=runs)
+    return "Ici se trouvera votre dashboard HTML (Tableau des scores)"
