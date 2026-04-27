@@ -1,35 +1,39 @@
 from flask import Flask, jsonify, render_template
 import storage
-# import tester.runner as runner # Votre script qui lance les tests
+from tester.tests import run_all_tests
 
 app = Flask(__name__)
 
-# Initialisation de la base au démarrage
+# Initialisation de la base de données au démarrage
 storage.init_db()
-
-@app.route('/health')
-def health_check():
-    """Bonus : Vérifier que votre propre garde est haute."""
-    return jsonify({"status": "OK", "message": "Le Dojo est opérationnel."}), 200
-
-@app.route('/run')
-def trigger_run():
-    """Déclenche l'affrontement (les tests automatisés)."""
-    # 1. Appeler votre runner pour exécuter les tests
-    # summary, details = runner.execute_all_tests()
-    
-    # 2. Sauvegarder dans SQLite
-    # storage.save_run(summary, details)
-    
-    return jsonify({"status": "Tests terminés", "action": "Consultez le /dashboard"}), 200
-
-@app.route('/dashboard')
-def dashboard():
-    """Affiche l'historique des affrontements."""
-    # runs = storage.get_all_runs()
-    # return render_template('dashboard.html', runs=runs)
-    return "Ici se trouvera votre dashboard HTML (Tableau des scores)"
 
 @app.route('/')
 def home():
     return "Bienvenue dans le Dojo d'automatisation des tests ! Allez sur /dashboard pour voir les scores."
+
+@app.route('/health')
+def health_check():
+    """Vérifie que votre garde est haute."""
+    return jsonify({"status": "OK", "message": "Le Dojo est opérationnel."}), 200
+
+@app.route('/run')
+def trigger_run():
+    """Déclenche l'affrontement (les tests automatisés) et sauvegarde le résultat."""
+    # 1. On lance les 6 rounds d'entraînement
+    summary, resultats = run_all_tests()
+    
+    # 2. On consigne le résultat dans le registre SQLite
+    storage.save_run(summary, resultats)
+    
+    # 3. On renvoie le rapport immédiat à l'écran
+    return jsonify({
+        "status": "Combat terminé",
+        "resume_du_match": summary,
+        "details": resultats,
+        "action": "Allez sur /dashboard pour voir l'historique"
+    }), 200
+
+@app.route('/dashboard')
+def dashboard():
+    """Pour l'instant, une route d'attente avant de créer l'interface graphique."""
+    return "Les combats ont bien été enregistrés ! Le tableau d'affichage (HTML) arrivera à la prochaine étape."
