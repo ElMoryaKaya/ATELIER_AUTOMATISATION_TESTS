@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template
 import storage
-from tester.tests import run_all_tests
+from tester.runner import run_all_tests
 
 app = Flask(__name__)
 
