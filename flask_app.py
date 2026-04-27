@@ -29,3 +29,7 @@ def dashboard():
     # runs = storage.get_all_runs()
     # return render_template('dashboard.html', runs=runs)
     return "Ici se trouvera votre dashboard HTML (Tableau des scores)"
+
+@app.route('/')
+def home():
+    return "Bienvenue dans le Dojo d'automatisation des tests ! Allez sur /dashboard pour voir les scores."
