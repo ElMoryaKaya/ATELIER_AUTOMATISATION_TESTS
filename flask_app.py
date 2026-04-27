@@ -35,5 +35,6 @@ def trigger_run():
 
 @app.route('/dashboard')
 def dashboard():
-    """Pour l'instant, une route d'attente avant de créer l'interface graphique."""
-    return "Les combats ont bien été enregistrés ! Le tableau d'affichage (HTML) arrivera à la prochaine étape."
+    """Affiche l'historique des affrontements sur une page web."""
+    historique = storage.get_all_runs()
+    return render_template('dashboard.html', runs=historique)
